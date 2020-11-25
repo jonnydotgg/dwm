@@ -66,7 +66,7 @@ static const char *audioprev[]  = { "playerctl", "-i", "vlc", "-i", "firefox", "
 static const char *audioplay[]  = { "playerctl", "-i", "vlc", "-i", "firefox", "play-pause", NULL };
 static const char *mediacontroller[]  = { "/usr/bin/pavucontrol", NULL };
 static const char *mousepadnotes[]  = { "mnotes", NULL };
-static const char *screenshot[]  = { "scrot", "-s", NULL };
+static const char *screenshot[]  = { "dwm-scrot", NULL };
 
 /* include XF86 key bindings */
 #include <X11/XF86keysym.h>
