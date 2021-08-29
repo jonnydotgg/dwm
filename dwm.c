@@ -663,14 +663,7 @@ configurenotify(XEvent *e)
 			drw_resize(drw, sw, bh);
 			updatebars();
 			for (m = mons; m; m = m->next) {
-<<<<<<< HEAD
-				XMoveResizeWindow(dpy, m->barwin, m->wx, m->by, m->ww, bh);
-=======
-				for (c = m->clients; c; c = c->next)
-					if (c->isfullscreen)
-						resizeclient(c, m->mx, m->my, m->mw, m->mh);
 				resizebarwin(m);
->>>>>>> systray
 			}
 			focus(NULL);
 			arrange(NULL);
