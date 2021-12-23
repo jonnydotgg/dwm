@@ -10,8 +10,8 @@ static const int systraypinningfailfirst = 1;   /* 1: if pinning fails, display 
 static const int showsystray        = 1;     /* 0 means no systray */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 0;        /* 0 means bottom bar */
-static const char *fonts[]          = { "Mono:pixelsize=14:antialias=true:autohint=true" };
-static const char dmenufont[]       = "Mono:pixelsize=14:antialias=true:autohint=true";
+static const char *fonts[]          = { "JetBrains Mono:pixelsize=14:antialias=true:autohint=true" };
+static const char dmenufont[]       = "JetBrains Mono:pixelsize=14:antialias=true:autohint=true";
 static const char col_gray1[]       = "#222222";
 static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bbbbbb";
@@ -62,16 +62,19 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 /* static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL }; */
-static const char *dmenucmd[] = { "dmenu_recency" };
-static const char *termcmd[]  = { "st", NULL };
-static const char *browser[]  = { "firefox", NULL };
-static const char *filebrowser[]  = { "pcmanfm", NULL };
-static const char *audionext[]  = { "playerctl", "-i", "vlc", "-i", "firefox", "next", NULL };
-static const char *audioprev[]  = { "playerctl", "-i", "vlc", "-i", "firefox", "previous", NULL };
-static const char *audioplay[]  = { "playerctl", "-i", "vlc", "-i", "firefox", "play-pause", NULL };
-static const char *mediacontroller[]  = { "/usr/bin/pavucontrol", NULL };
-static const char *mousepadnotes[]  = { "mnotes", NULL };
-static const char *screenshot[]  = { "dwm-scrot", NULL };
+static const char *dmenucmd[] 			= { "dmenu_recency" };
+static const char *termcmd[]  			= { "st", NULL };
+static const char *browser[]  			= { "firefox", NULL };
+static const char *filebrowser[]  		= { "pcmanfm", NULL };
+static const char *audionext[]  		= { "playerctl", "-i", "vlc", "-i", "firefox", "next", NULL };
+static const char *audioprev[]  		= { "playerctl", "-i", "vlc", "-i", "firefox", "previous", NULL };
+static const char *audioplay[]  		= { "playerctl", "-i", "vlc", "-i", "firefox", "play-pause", NULL };
+static const char *audioup[]  			= { "pactl", "set-sink-volume", "0", "+5%", NULL };
+static const char *audiodown[]  		= { "pactl", "set-sink-volume", "0", "-5%", NULL };
+static const char *audiomute[]  		= { "pactl", "set-sink-mute", "0", "toggle", NULL };
+static const char *mediacontroller[]  	= { "/usr/bin/pavucontrol", NULL };
+static const char *mousepadnotes[]  	= { "mnotes", NULL };
+static const char *screenshot[]  		= { "dwm-scrot", NULL };
 
 /* include XF86 key bindings */
 #include <X11/XF86keysym.h>
@@ -97,10 +100,10 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_space,  	          					togglefloating, {0} },
 	{ MODKEY,                       XK_0,      	          					view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_0,      	          					tag,            {.ui = ~0 } },
-	{ MODKEY,                       XK_comma,  	          					focusmon,       {.i = -1 } },
-	{ MODKEY,                       XK_period, 	          					focusmon,       {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_comma,  	          					tagmon,         {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_period, 	          					tagmon,         {.i = +1 } },
+	{ MODKEY,                       XK_comma,  	          					focusmon,       {.i = +1 } },
+	{ MODKEY,                       XK_period, 	          					focusmon,       {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_comma,  	          					tagmon,         {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_period, 	          					tagmon,         {.i = -1 } },
 	TAGKEYS(                        XK_1,      	          					                0)
 	TAGKEYS(                        XK_2,      	          					                1)
 	TAGKEYS(                        XK_3,      	          					                2)
@@ -115,6 +118,9 @@ static Key keys[] = {
 	{ 0,							XF86XK_AudioNext,						spawn,			{.v = audionext } },
 	{ 0,							XF86XK_AudioPrev,						spawn,			{.v = audioprev } },
 	{ 0,							XF86XK_AudioPlay,						spawn,			{.v = audioplay } },
+	{ 0,							XF86XK_AudioMute,						spawn,			{.v = audiomute } },
+	{ 0,							XF86XK_AudioRaiseVolume,				spawn,			{.v = audioup } },
+	{ 0,							XF86XK_AudioLowerVolume,				spawn,			{.v = audiodown } },		
 	{ MODKEY|ControlMask,			XK_m,									spawn,			{.v = mediacontroller } },
 	/*  Shortcuts */
 	{ MODKEY,						XK_F3,									spawn,			{.v = filebrowser } },
