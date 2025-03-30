@@ -66,12 +66,12 @@ static const char *dmenucmd[] 			= { "dmenu_recency" };
 static const char *termcmd[]  			= { "st", NULL };
 static const char *browser[]  			= { "firefox", NULL };
 static const char *filebrowser[]  		= { "pcmanfm", NULL };
-static const char *audionext[]  		= { "playerctl", "-i", "vlc", "-i", "firefox", "next", NULL };
-static const char *audioprev[]  		= { "playerctl", "-i", "vlc", "-i", "firefox", "previous", NULL };
-static const char *audioplay[]  		= { "playerctl", "-i", "vlc", "-i", "firefox", "play-pause", NULL };
-static const char *audioup[]  			= { "pactl", "set-sink-volume", "0", "+5%", NULL };
-static const char *audiodown[]  		= { "pactl", "set-sink-volume", "0", "-5%", NULL };
-static const char *audiomute[]  		= { "pactl", "set-sink-mute", "0", "toggle", NULL };
+static const char *audionext[]  		= { "playerctl", "-i", "vlc,firefox,chromium", "next", NULL };
+static const char *audioprev[]  		= { "playerctl", "-i", "vlc,firefox,chromium", "previous", NULL };
+static const char *audioplay[]  		= { "playerctl", "-i", "vlc,firefox,chromium", "play-pause", NULL };
+static const char *audioup[]  			= { "pactl", "set-sink-volume", "alsa_output.usb-FiiO_K3-00.analog-stereo", "+5%", NULL };
+static const char *audiodown[]  		= { "pactl", "set-sink-volume", "alsa_output.usb-FiiO_K3-00.analog-stereo", "-5%", NULL };
+static const char *audiomute[]  		= { "pactl", "set-sink-mute", "alsa_output.usb-FiiO_K3-00.analog-stereo", "toggle", NULL };
 static const char *mediacontroller[]  	= { "/usr/bin/pavucontrol", NULL };
 static const char *mousepadnotes[]  	= { "mnotes", NULL };
 static const char *screenshot[]  		= { "dwm-scrot", NULL };
@@ -88,8 +88,8 @@ static Key keys[] = {
 	{ MODKEY,						XK_k,									focusstack,		{.i = +1 } },
 	{ MODKEY,						XK_u,									incnmaster,		{.i = +1 } },
 	{ MODKEY,						XK_i,									incnmaster,		{.i = -1 } },
-	{ MODKEY,						XK_h,									setmfact,		{.f = +0.05} },
-	{ MODKEY,						XK_l,									setmfact,		{.f = -0.05} },
+	{ MODKEY,						XK_h,									setmfact,		{.f = +0.02} },
+	{ MODKEY,						XK_l,									setmfact,		{.f = -0.02} },
 	{ MODKEY|ShiftMask,				XK_Return,								zoom,			{0} },
 	{ MODKEY,						XK_Tab,									view,			{0} },
 	{ MODKEY|ShiftMask,				XK_c,									quit,			{0} },
