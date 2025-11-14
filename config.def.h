@@ -62,9 +62,11 @@ static const Layout layouts[] = {
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
 /* static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL }; */
-static const char *dmenucmd[] 			= { "dmenu_recency" };
-static const char *termcmd[]  			= { "st", NULL };
+static const char *dmenucmd[] = { "dmenu_run", NULL };
+/* static const char *dmenucmd[] 			= { "dmenu_recency" }; */
+static const char *termcmd[]  			= { "alacritty", NULL };
 static const char *browser[]  			= { "firefox", NULL };
+static const char *privatebrowser[]  			= { "firefox", "--private-window", NULL };
 static const char *filebrowser[]  		= { "pcmanfm", NULL };
 static const char *audionext[]  		= { "playerctl", "-i", "vlc,firefox,chromium", "next", NULL };
 static const char *audioprev[]  		= { "playerctl", "-i", "vlc,firefox,chromium", "previous", NULL };
@@ -76,14 +78,21 @@ static const char *mediacontroller[]  	= { "/usr/bin/pavucontrol", NULL };
 static const char *mousepadnotes[]  	= { "mnotes", NULL };
 static const char *screenshot[]  		= { "dwm-scrot", NULL };
 
+/* Browser Based Shortcuts */
+static const char *chatgpt[]  		= { "/home/brownjo/bin/chatgpt.sh", NULL };
+static const char *youtube[]  		= { "/home/brownjo/bin/youtube.sh", NULL };
+static const char *googlemeet[]  		= { "/home/brownjo/bin/googlemeet.sh", NULL };
+static const char *calendar[]  		= { "/home/brownjo/bin/calendar.sh", NULL };
+static const char *email[]  		= { "/home/brownjo/bin/gmail.sh", NULL };
+
 /* include XF86 key bindings */
 #include <X11/XF86keysym.h>
 
 static Key keys[] = {
 	/* modifier						key										function		argument */
 	{ MODKEY,						XK_d,									spawn,			{.v = dmenucmd } },
-	{ MODKEY,						XK_Return,								spawn,			{.v = termcmd } },
-	{ MODKEY,						XK_b,									togglebar,		{0} },
+	{ MODKEY,						XK_Return,						spawn,			{.v = termcmd } },
+	{ MODKEY|ControlMask,	XK_b,									togglebar,		{0} },
 	{ MODKEY,						XK_j,									focusstack,		{.i = -1 } },
 	{ MODKEY,						XK_k,									focusstack,		{.i = +1 } },
 	{ MODKEY,						XK_u,									incnmaster,		{.i = +1 } },
@@ -113,7 +122,7 @@ static Key keys[] = {
 	TAGKEYS(						XK_7,													6)
 	TAGKEYS(						XK_8,													7)
 	TAGKEYS(						XK_9,													8)
-	{ MODKEY|ShiftMask,				XK_q,									killclient,     {0} },
+	{ MODKEY,				XK_w,									killclient,     {0} },
 	/*  Media Keys  */
 	{ 0,							XF86XK_AudioNext,						spawn,			{.v = audionext } },
 	{ 0,							XF86XK_AudioPrev,						spawn,			{.v = audioprev } },
@@ -123,10 +132,16 @@ static Key keys[] = {
 	{ 0,							XF86XK_AudioLowerVolume,				spawn,			{.v = audiodown } },		
 	{ MODKEY|ControlMask,			XK_m,									spawn,			{.v = mediacontroller } },
 	/*  Shortcuts */
-	{ MODKEY,						XK_F3,									spawn,			{.v = filebrowser } },
-	{ MODKEY,						XK_F2,									spawn,			{.v = browser } },
-	{ MODKEY|ShiftMask,				XK_m,									spawn,			{.v = mousepadnotes } },
-	{ MODKEY|ShiftMask,				XK_p,									spawn,			{.v = screenshot } }
+	{ MODKEY, 					  XK_F3,								spawn,			{.v = filebrowser } },
+	{ MODKEY, 					  XK_b,									spawn,			{.v = browser } },
+	{ MODKEY|ShiftMask,   XK_b,									spawn,			{.v = privatebrowser } },
+	{ MODKEY,             XK_n,									spawn,			{.v = mousepadnotes } },
+	{ MODKEY, 			      XK_s,									spawn,			{.v = screenshot } },
+	{ MODKEY, 			      XK_a,									spawn,			{.v = chatgpt } },
+	{ MODKEY, 			      XK_y,									spawn,			{.v = youtube } },
+	{ MODKEY, 			      XK_c,									spawn,			{.v = calendar } },
+	{ MODKEY, 			      XK_e,									spawn,			{.v = email } },
+	{ MODKEY, 			      XK_g,									spawn,			{.v = googlemeet } }
 };
 
 /* button definitions */
