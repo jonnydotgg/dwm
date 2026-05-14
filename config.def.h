@@ -31,9 +31,10 @@ static const Rule rules[] = {
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class      instance						title       tags mask     isfloating   monitor */
-	{ "Firefox",  NULL,							NULL,       1 << 8,       0,           -1 },
-	{ "Firefox",  "Picture-in-Picture",			NULL,       1 << 8,       1,           -1 },
+	/* class        instance                  title       tags mask     isfloating   monitor */
+	{ "Firefox",    NULL,                     NULL,       1 << 8,       0,           -1 },
+	{ "Firefox",    "Picture-in-Picture",     NULL,       1 << 8,       1,           -1 },
+	{ "nm-applet",  NULL,                     NULL,       1 << 8,       1,           -1 },
 };
 
 /* layout(s) */
@@ -84,6 +85,7 @@ static const char *youtube[]  		= { "/home/brownjo/bin/youtube.sh", NULL };
 static const char *googlemeet[]  		= { "/home/brownjo/bin/googlemeet.sh", NULL };
 static const char *calendar[]  		= { "/home/brownjo/bin/calendar.sh", NULL };
 static const char *email[]  		= { "/home/brownjo/bin/gmail.sh", NULL };
+static const char *plex[]  		= { "/home/brownjo/bin/plex.sh", NULL };
 
 /* include XF86 key bindings */
 #include <X11/XF86keysym.h>
@@ -141,6 +143,7 @@ static Key keys[] = {
 	{ MODKEY, 			      XK_y,									spawn,			{.v = youtube } },
 	{ MODKEY, 			      XK_c,									spawn,			{.v = calendar } },
 	{ MODKEY, 			      XK_e,									spawn,			{.v = email } },
+	{ MODKEY, 			      XK_p,									spawn,			{.v = plex } },
 	{ MODKEY, 			      XK_g,									spawn,			{.v = googlemeet } }
 };
 

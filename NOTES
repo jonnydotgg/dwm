@@ -1,0 +1,13 @@
+TODO:
+- Make verticle panes not master-stack, just stack
+- Set master to right, not left
+- real full screen options
+- nice status bar
+	- time (UK, UTC, India)
+	- Disk space
+	- CPU load
+	- Memory
+	- Network through put
+	- DNS server
+	- weather
+
