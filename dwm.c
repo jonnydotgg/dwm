@@ -206,6 +206,7 @@ static void incnmaster(const Arg *arg);
 static void keypress(XEvent *e);
 static void killclient(const Arg *arg);
 static void manage(Window w, XWindowAttributes *wa);
+static int masterleft(Monitor *m);
 static void mappingnotify(XEvent *e);
 static void maprequest(XEvent *e);
 static void monocle(Monitor *m);
@@ -1154,6 +1155,13 @@ killclient(const Arg *arg)
 	}
 }
 
+/* master sits on the side facing the centre of the whole screen */
+int
+masterleft(Monitor *m)
+{
+	return m->mx + m->mw / 2 > sw / 2;
+}
+
 void
 manage(Window w, XWindowAttributes *wa)
 {
@@ -1719,7 +1727,11 @@ setmfact(const Arg *arg)
 
 	if (!arg || !selmon->lt[selmon->sellt]->arrange)
 		return;
-	f = arg->f < 1.0 ? arg->f + selmon->mfact : arg->f - 1.0;
+	/* keep resize keys spatial: flip the delta when master is on the left */
+	if (arg->f < 1.0)
+		f = selmon->mfact + (masterleft(selmon) ? -arg->f : arg->f);
+	else
+		f = arg->f - 1.0;
 	if (f < 0.05 || f > 0.95)
 		return;
 	selmon->mfact = selmon->pertag->mfacts[selmon->pertag->curtag] = f;
@@ -1883,6 +1895,7 @@ void
 tile(Monitor *m)
 {
 	unsigned int i, n, h, mw, my, ty;
+	int mx, sx;
 	Client *c;
 
 	for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
@@ -1893,15 +1906,22 @@ tile(Monitor *m)
 		mw = m->nmaster ? m->ww * m->mfact : 0;
 	else
 		mw = m->ww;
+	if (masterleft(m)) {
+		mx = m->wx;
+		sx = m->wx + mw;
+	} else {
+		mx = m->wx + m->ww - mw;
+		sx = m->wx;
+	}
 	for (i = my = ty = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
 		if (i < m->nmaster) {
 			h = (m->wh - my) / (MIN(n, m->nmaster) - i);
-			resize(c, m->wx + m->ww - mw, m->wy + my, mw - (2*c->bw), h - (2*c->bw), 0);
+			resize(c, mx, m->wy + my, mw - (2*c->bw), h - (2*c->bw), 0);
 			if (my + HEIGHT(c) < m->wh)
 				my += HEIGHT(c);
 		} else {
 			h = (m->wh - ty) / (n - i);
-			resize(c, m->wx, m->wy + ty, m->ww - mw - (2*c->bw), h - (2*c->bw), 0);
+			resize(c, sx, m->wy + ty, m->ww - mw - (2*c->bw), h - (2*c->bw), 0);
 			if (ty + HEIGHT(c) < m->wh)
 				ty += HEIGHT(c);
 		}
