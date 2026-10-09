@@ -624,8 +624,17 @@ clientmessage(XEvent *e)
 			setfullscreen(c, (cme->data.l[0] == 1 /* _NET_WM_STATE_ADD    */
 				|| cme->data.l[0] == 2 /* _NET_WM_STATE_TOGGLE */));
 	} else if (cme->message_type == netatom[NetActiveWindow]) {
-		if (c != selmon->sel && !c->isurgent)
-			seturgent(c, 1);
+		/* focusonnetactive: jump to the client's monitor and tag, then focus it */
+		if (c->mon != selmon) {
+			unfocus(selmon->sel, 0);
+			selmon = c->mon;
+		}
+		if (!ISVISIBLE(c)) {
+			Arg a = { .ui = c->tags };
+			view(&a);
+		}
+		focus(c);
+		restack(selmon);
 	}
 }
 
