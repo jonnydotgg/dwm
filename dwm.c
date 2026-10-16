@@ -75,7 +75,7 @@
 
 /* enums */
 enum { CurNormal, CurResize, CurMove, CurLast }; /* cursor */
-enum { SchemeNorm, SchemeSel }; /* color schemes */
+enum { SchemeNorm, SchemeSel, SchemeWarn, SchemeCrit }; /* color schemes */
 enum { NetSupported, NetWMName, NetWMState, NetWMCheck,
        NetSystemTray, NetSystemTrayOP, NetSystemTrayOrientation, NetSystemTrayOrientationHorz,
        NetWMFullscreen, NetActiveWindow, NetWMWindowType,
@@ -188,6 +188,7 @@ static void detach(Client *c);
 static void detachstack(Client *c);
 static Monitor *dirtomon(int dir);
 static void drawbar(Monitor *m);
+static int drawstatus(Monitor *m, int stw);
 static void drawbars(void);
 static void enternotify(XEvent *e);
 static void expose(XEvent *e);
@@ -238,6 +239,7 @@ static void seturgent(Client *c, int urg);
 static void showhide(Client *c);
 static void sigchld(int unused);
 static void spawn(const Arg *arg);
+static unsigned int statusw(void);
 static Monitor *systraytomon(Monitor *m);
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
@@ -487,7 +489,7 @@ buttonpress(XEvent *e)
 			arg.ui = 1 << i;
 		} else if (ev->x < x + blw)
 			click = ClkLtSymbol;
-		else if (ev->x > selmon->ww - (int)TEXTW(stext) - getsystraywidth())
+		else if (ev->x > selmon->ww - (int)statusw() - getsystraywidth())
 			click = ClkStatusText;
 		else
 			click = ClkWinTitle;
@@ -831,11 +833,8 @@ drawbar(Monitor *m)
 		stw = getsystraywidth();
 
 	/* draw status first so it can be overdrawn by tags later */
-	if (m == selmon) { /* status is only drawn on selected monitor */
-		drw_setscheme(drw, scheme[SchemeNorm]);
-		tw = TEXTW(stext) - lrpad / 2 + 2; /* 2px extra right padding */
-		drw_text(drw, m->ww - tw - stw, 0, tw, bh, lrpad / 2 - 2, stext, 0);
-	}
+	if (m == selmon) /* status is only drawn on selected monitor */
+		tw = drawstatus(m, stw);
 
 	resizebarwin(m);
 	for (c = m->clients; c; c = c->next) {
@@ -870,6 +869,42 @@ drawbar(Monitor *m)
 		}
 	}
 	drw_map(drw, m->barwin, 0, 0, m->ww - stw, bh);
+}
+
+/* status text may contain bytes \x01..\x(LENGTH(colors)) which switch to
+ * colour scheme (byte - 1) for the text that follows */
+static int
+isschemebyte(char c)
+{
+	return (unsigned char)c > 0 && (unsigned char)c <= LENGTH(colors);
+}
+
+int
+drawstatus(Monitor *m, int stw)
+{
+	char buf[sizeof(stext)], *s, *p, c;
+	int x, w, tw;
+
+	tw = statusw() - lrpad / 2 + 2; /* 2px extra right padding */
+	x = m->ww - tw - stw;
+	drw_setscheme(drw, scheme[SchemeNorm]);
+	drw_rect(drw, x, 0, tw, bh, 1, 1);
+	x += lrpad / 2 - 2;
+
+	memcpy(buf, stext, sizeof(buf));
+	for (s = p = buf; ; p++) {
+		if (*p && !isschemebyte(*p))
+			continue;
+		c = *p;
+		*p = '\0';
+		if (*s && (w = drw_fontset_getwidth(drw, s)))
+			x = drw_text(drw, x, 0, w, bh, 0, s, 0);
+		if (!c)
+			break;
+		drw_setscheme(drw, scheme[c - 1]);
+		s = p + 1;
+	}
+	return tw;
 }
 
 void
@@ -1037,6 +1072,20 @@ getstate(Window w)
 		result = *p;
 	XFree(p);
 	return result;
+}
+
+unsigned int
+statusw(void)
+{
+	char buf[sizeof(stext)];
+	const char *s;
+	char *d;
+
+	for (s = stext, d = buf; *s; s++)
+		if (!isschemebyte(*s))
+			*d++ = *s;
+	*d = '\0';
+	return TEXTW(buf);
 }
 
 unsigned int
@@ -2337,7 +2386,7 @@ updatesystray(void)
 	Client *i;
 	Monitor *m = systraytomon(NULL);
 	unsigned int x = m->mx + m->mw;
-	unsigned int sw = TEXTW(stext) - lrpad + systrayspacing;
+	unsigned int sw = statusw() - lrpad + systrayspacing;
 	unsigned int w = 1;
 
 	if (!showsystray)
